@@ -15,8 +15,14 @@ import GestionClientes from './components/GestionClientes';
 import AplicarDescuento from './components/AplicarDescuento';
 import Reportes from './components/Reportes';
 import GestionInventario from './components/GestionInventario';
-import { Producto, ItemVenta, Factura, Devolucion, Cliente, Descuento } from './types';
+import GestionSucursales from './components/GestionSucursales';
+import GestionEmpleados from './components/GestionEmpleados';
+import CierreDiario from './components/CierreDiario';
+import { Producto, ItemVenta, Factura, Devolucion, Cliente, Descuento, Sucursal, Empleado } from './types';
 import { productosData } from './data/productos';
+import { sucursalesData } from './data/sucursales';
+import { empleadosData } from './data/empleados';
+import { facturasData } from './data/facturas';
 
 export default function Home() {
   const [usuarioActual, setUsuarioActual] = useState<{ rol: 'cliente' | 'admin' | 'cajero' | null; nombre: string }>({ 
@@ -29,10 +35,15 @@ export default function Home() {
   const [facturaGenerada, setFacturaGenerada] = useState<Factura | null>(null);
   const [clienteSeleccionado, setClienteSeleccionado] = useState<Cliente | null>(null);
   const [descuentoAplicado, setDescuentoAplicado] = useState<Descuento | null>(null);
-  const [facturas, setFacturas] = useState<Factura[]>([]);
+  const [facturas, setFacturas] = useState<Factura[]>(facturasData); // Inicializar con datos de prueba
+  const [sucursales, setSucursales] = useState<Sucursal[]>(sucursalesData);
+  const [empleados, setEmpleados] = useState<Empleado[]>(empleadosData);
   const [mostrarReportes, setMostrarReportes] = useState(false);
   const [mostrarInventario, setMostrarInventario] = useState(false);
   const [mostrarDashboard, setMostrarDashboard] = useState(false);
+  const [mostrarSucursales, setMostrarSucursales] = useState(false);
+  const [mostrarEmpleados, setMostrarEmpleados] = useState(false);
+  const [mostrarCierreDiario, setMostrarCierreDiario] = useState(false);
 
   const handleLogin = (rol: 'cliente' | 'admin' | 'cajero', nombre: string) => {
     setUsuarioActual({ rol, nombre });
@@ -46,6 +57,25 @@ export default function Home() {
     setDescuentoAplicado(null);
     setMostrarReportes(false);
     setMostrarInventario(false);
+    setMostrarSucursales(false);
+    setMostrarEmpleados(false);
+    setMostrarCierreDiario(false);
+  };
+
+  const agregarSucursal = (sucursal: Sucursal) => {
+    setSucursales([...sucursales, sucursal]);
+  };
+
+  const actualizarSucursal = (id: string, sucursalActualizada: Sucursal) => {
+    setSucursales(sucursales.map(s => s.id === id ? sucursalActualizada : s));
+  };
+
+  const agregarEmpleado = (empleado: Empleado) => {
+    setEmpleados([...empleados, empleado]);
+  };
+
+  const actualizarEmpleado = (id: string, empleadoActualizado: Empleado) => {
+    setEmpleados(empleados.map(e => e.id === id ? empleadoActualizado : e));
   };
 
   const agregarProductoInventario = (producto: Producto) => {
@@ -220,22 +250,40 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 mb-6">
+        <div className="flex justify-end gap-3 mb-6 flex-wrap">
           <button
             onClick={() => setMostrarDashboard(!mostrarDashboard)}
-            className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-8 py-4 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all transform hover:scale-105 font-bold shadow-lg text-lg"
+            className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-blue-700 transition-all transform hover:scale-105 font-bold shadow-lg"
           >
             📊 {mostrarDashboard ? 'Ocultar' : 'Ver'} Dashboard
           </button>
           <button
+            onClick={() => setMostrarCierreDiario(!mostrarCierreDiario)}
+            className="bg-gradient-to-r from-red-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-red-700 hover:to-pink-700 transition-all transform hover:scale-105 font-bold shadow-lg"
+          >
+            💰 {mostrarCierreDiario ? 'Ocultar' : 'Ver'} Cierre Diario
+          </button>
+          <button
+            onClick={() => setMostrarSucursales(!mostrarSucursales)}
+            className="bg-gradient-to-r from-cyan-600 to-teal-600 text-white px-6 py-3 rounded-xl hover:from-cyan-700 hover:to-teal-700 transition-all transform hover:scale-105 font-bold shadow-lg"
+          >
+            🏪 {mostrarSucursales ? 'Ocultar' : 'Gestionar'} Sucursales
+          </button>
+          <button
+            onClick={() => setMostrarEmpleados(!mostrarEmpleados)}
+            className="bg-gradient-to-r from-yellow-600 to-orange-600 text-white px-6 py-3 rounded-xl hover:from-yellow-700 hover:to-orange-700 transition-all transform hover:scale-105 font-bold shadow-lg"
+          >
+            👥 {mostrarEmpleados ? 'Ocultar' : 'Gestionar'} Empleados
+          </button>
+          <button
             onClick={() => setMostrarInventario(!mostrarInventario)}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 font-bold shadow-lg text-lg"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105 font-bold shadow-lg"
           >
             📦 {mostrarInventario ? 'Ocultar' : 'Gestionar'} Inventario
           </button>
           <button
             onClick={() => setMostrarReportes(!mostrarReportes)}
-            className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all transform hover:scale-105 font-bold shadow-lg text-lg"
+            className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all transform hover:scale-105 font-bold shadow-lg"
           >
             📈 {mostrarReportes ? 'Ocultar' : 'Ver'} Reportes
           </button>
@@ -243,6 +291,32 @@ export default function Home() {
         </div>
 
         {mostrarDashboard && <Dashboard facturas={facturas} />}
+
+        {mostrarCierreDiario && (
+          <CierreDiario 
+            facturas={facturas}
+            onCerrar={() => setMostrarCierreDiario(false)}
+          />
+        )}
+
+        {mostrarSucursales && (
+          <GestionSucursales 
+            sucursales={sucursales}
+            onAgregarSucursal={agregarSucursal}
+            onActualizarSucursal={actualizarSucursal}
+            onCerrar={() => setMostrarSucursales(false)}
+          />
+        )}
+
+        {mostrarEmpleados && (
+          <GestionEmpleados 
+            empleados={empleados}
+            sucursales={sucursales}
+            onAgregarEmpleado={agregarEmpleado}
+            onActualizarEmpleado={actualizarEmpleado}
+            onCerrar={() => setMostrarEmpleados(false)}
+          />
+        )}
 
         {mostrarInventario && (
           <GestionInventario 

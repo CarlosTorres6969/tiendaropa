@@ -76,3 +76,31 @@ export interface ReporteVentas {
   metodoPagoMasUsado: string;
   ventasPorDia: { fecha: string; total: number }[];
 }
+
+export interface Sucursal {
+  id: string;
+  nombre: string;
+  codigo: string;
+  direccion: string;
+  telefono: string;
+  ciudad: string;
+  gerente: string;
+  fechaApertura: Date;
+  estado: 'activa' | 'inactiva';
+}
+
+export interface Empleado {
+  id: string;
+  nombre: string;
+  apellido: string;
+  identificacion: string;
+  telefono: string;
+  email: string;
+  puesto: 'gerente' | 'cajero' | 'vendedor' | 'supervisor';
+  sucursalId: string;
+  fechaContratacion: Date;
+  salario: number;
+  estado: 'activo' | 'inactivo';
+  usuario?: string;
+  password?: string;
+}
